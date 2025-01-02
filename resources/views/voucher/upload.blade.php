@@ -14,22 +14,29 @@
             <form action="{{ route('voucher.upload') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
-                    <label for="file" class="col-form-label">Selecciona archivos XML</label>
-                    <div class="input-group">
-                        <div class="custom-file">
-                            <!-- Atributo 'multiple' para cargar varios archivos -->
-                            <input type="file" class="custom-file-input" id="file" name="files[]" accept=".xml" required multiple>
-                            <label class="custom-file-label" for="file">Elige archivos</label>
-                        </div>
+                    <label for="file" class="col-form-label font-weight-bold">Selecciona archivos XML</label>
+                    <div class="file-upload-wrapper text-center p-4 border border-light rounded bg-light position-relative">
+                        <!-- Ícono de archivo como fondo -->
+                        <i class="fas fa-file-upload fa-5x text-muted" style="opacity: 0.3; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+
+                        <!-- Input real oculto -->
+                        <input type="file" class="custom-file-input d-none" id="file" name="files[]" accept=".xml" required multiple>
+
+                        <!-- Zona de texto interactiva para el input -->
+                        <label class="file-label btn btn-outline-primary position-relative" for="file" style="z-index: 1;">
+                            <i class="fas fa-cloud-upload-alt fa-2x mr-2"></i>
+                            <span class="text">Haz clic para subir archivos</span>
+                        </label>
+
+                        <!-- Contenedor para mostrar los íconos y nombres de los archivos seleccionados -->
+                        <div id="fileList" class="mt-4 d-flex flex-wrap justify-content-center"></div>
                     </div>
 
-                    <!-- Contenedor para mostrar los íconos y nombres de los archivos seleccionados -->
-                    <div id="fileList" class="mt-2 d-flex flex-wrap"></div>
-
                     @error('files')
-                        <div class="text-danger">{{ $message }}</div>
+                        <div class="text-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
+
                 <button type="submit" class="btn btn-primary btn-block">Subir Comprobantes</button>
             </form>
 
@@ -171,7 +178,7 @@
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.16/dist/sweetalert2.min.js"></script>
 
-
+    <script src="{{asset('/js/upload.js')}}"></script>
     <script>
         $(document).ready(function() {
             $('#vouchersTable').DataTable({
@@ -185,42 +192,9 @@
             });
         });
 
-        // Mostrar los íconos y nombres de los archivos seleccionados
-document.getElementById("file").addEventListener("change", function() {
-    var fileList = this.files;
-    var fileListContainer = document.getElementById("fileList");
 
-    // Limpiar el contenedor de archivos previos
-    fileListContainer.innerHTML = '';
 
-    // Si no hay archivos seleccionados
-    if (fileList.length === 0) {
-        fileListContainer.innerHTML = "<p class='text-muted'>Ningún archivo seleccionado</p>";
-        return;
-    }
 
-    // Iterar a través de los archivos seleccionados y mostrar el ícono y nombre
-    Array.from(fileList).forEach(file => {
-        var fileWrapper = document.createElement("div");
-        fileWrapper.classList.add("file-item", "text-center", "mr-3", "mb-3");
-
-        // Crear el ícono del archivo (usaremos un ícono genérico de archivo)
-        var fileIcon = document.createElement("i");
-        fileIcon.classList.add("fas", "fa-file", "fa-3x", "text-primary");
-
-        // Crear el nombre del archivo
-        var fileName = document.createElement("p");
-        fileName.classList.add("mt-2", "text-muted");
-        fileName.textContent = file.name;
-
-        // Agregar el ícono y el nombre al contenedor
-        fileWrapper.appendChild(fileIcon);
-        fileWrapper.appendChild(fileName);
-
-        // Agregar el contenedor de archivo al contenedor principal
-        fileListContainer.appendChild(fileWrapper);
-    });
-});
 
     </script>
 @endpush
