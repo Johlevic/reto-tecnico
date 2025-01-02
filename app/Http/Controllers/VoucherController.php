@@ -26,6 +26,7 @@ class VoucherController extends Controller
     public function __construct(VoucherService $voucherService)
     {
         $this->voucherService = $voucherService;
+
     }
 
     public function upload(Request $request)
@@ -278,63 +279,65 @@ public function VoucherArticulos()
 
 
 
-public function searchVoucherArticulos(Request $request)
-{
+    public function searchVoucherArticulos(Request $request)
+    {
+        // Obtener el ID del usuario autenticado
+        $userId = Auth::id();
 
-    $search = $request->input('search');
-    $searchBy = $request->input('search_by');
-    $startDate = $request->input('start_date');
-    $endDate = $request->input('end_date');
+        // Capturar los filtros desde el request
+        $search = $request->input('search');
+        $searchBy = $request->input('search_by');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        // Construir la consulta con filtros
+        $vouchers = Voucher::query()
+            ->with(['voucherLines', 'user', 'taxTotals', 'allowanceCharges'])
+            ->where('user_id', $userId) // Filtrar solo los comprobantes del usuario autenticado
+            ->when($search, function ($query, $search) use ($searchBy) {
+                return $query->where(function ($query) use ($search, $searchBy) {
+                    if ($searchBy === 'created_at') {
+                        $query->whereDate('created_at', '=', $search);
+                    } else {
+                        $query->where('invoice_id', 'like', "%$search%")
+                            ->orWhere('currency', 'like', "%$search%")
+                            ->orWhere('issuer_name', 'like', "%$search%")
+                            ->orWhere('receiver_name', 'like', "%$search%")
+                            ->orWhereHas('user', function ($userQuery) use ($search) {
+                                $userQuery->where('name', 'like', "%$search%");
+                            })
+                            ->orWhereHas('voucherLines', function ($lineQuery) use ($search) {
+                                $lineQuery->where('description', 'like', "%$search%")
+                                    ->orWhere('item_id', 'like', "%$search%")
+                                    ->orWhere('unit_price', 'like', "%$search%");
+                            })
+                            ->orWhereHas('taxTotals', function ($taxQuery) use ($search) {
+                                $taxQuery->where('tax_name', 'like', "%$search%")
+                                    ->orWhere('tax_code', 'like', "%$search%");
+                            })
+                            ->orWhereHas('allowanceCharges', function ($chargeQuery) use ($search) {
+                                $chargeQuery->where('reason_code', 'like', "%$search%");
+                            });
+                    }
+                });
+            })
+            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                return $query->whereBetween('created_at', [$startDate, $endDate]);
+            })
+            ->when($startDate && !$endDate, function ($query) use ($startDate) {
+                return $query->where('created_at', '>=', $startDate);
+            })
+            ->when(!$startDate && $endDate, function ($query) use ($endDate) {
+                return $query->where('created_at', '<=', $endDate);
+            })
+            ->paginate(10);
+
+        // Retornar la vista con los datos paginados
+        return view('dashboard.articulos', compact('vouchers'));
+    }
 
 
-    $vouchers = Voucher::query()
-        ->with(['voucherLines', 'user', 'taxTotals', 'allowanceCharges'])
-        ->when($search, function ($query, $search) use ($searchBy) {
-            return $query->where(function ($query) use ($search, $searchBy) {
 
-                if ($searchBy === 'created_at') {
-
-                    $query->whereDate('created_at', '=', $search);
-                } else {
-
-                    $query->where('invoice_id', 'like', "%$search%")
-                        ->orWhere('currency', 'like', "%$search%")
-                        ->orWhere('issuer_name', 'like', "%$search%")
-                        ->orWhere('receiver_name', 'like', "%$search%")
-                        ->orWhereHas('user', function ($userQuery) use ($search) {
-                            $userQuery->where('name', 'like', "%$search%");
-                        })
-                        ->orWhereHas('voucherLines', function ($lineQuery) use ($search) {
-                            $lineQuery->where('description', 'like', "%$search%")
-                                      ->orWhere('item_id', 'like', "%$search%")
-                                      ->orWhere('unit_price', 'like', "%$search%");
-                        })
-                        ->orWhereHas('taxTotals', function ($taxQuery) use ($search) {
-                            $taxQuery->where('tax_name', 'like', "%$search%")
-                                     ->orWhere('tax_code', 'like', "%$search%");
-                        })
-                        ->orWhereHas('allowanceCharges', function ($chargeQuery) use ($search) {
-                            $chargeQuery->where('reason_code', 'like', "%$search%");
-                        });
-                }
-            });
-        })
-        ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-
-            return $query->whereBetween('created_at', [$startDate, $endDate]);
-        })
-        ->when($startDate && !$endDate, function ($query) use ($startDate) {
-
-            return $query->where('created_at', '>=', $startDate);
-        })
-        ->when(!$startDate && $endDate, function ($query) use ($endDate) {
-
-            return $query->where('created_at', '<=', $endDate);
-        })
-        ->paginate(10);
-
-    return view('dashboard.articulos', compact('vouchers'));
-}
 
 
 public function index()
