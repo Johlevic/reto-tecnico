@@ -259,67 +259,79 @@ public function getTotalAmountsByCurrency()
 
 public function VoucherArticulos()
 {
-    // Cargar vouchers con las relaciones de voucherLines, tax_totals y allowance_charges
-    $vouchers = Voucher::with(['voucherLines', 'user', 'taxTotals', 'allowanceCharges'])->paginate(10);
+    // Verificar si el usuario está autenticado
+    if (!Auth::check()) {
+        // Redirigir al inicio de sesión con un mensaje de error
+        return redirect()->route('login')->with('error', 'Por favor, inicie sesión para acceder a esta sección.');
+    }
+
+    // Obtener el ID del usuario autenticado
+    $userId = Auth::id();
+
+    // Cargar vouchers del usuario autenticado con relaciones y paginación
+    $vouchers = Voucher::where('user_id', $userId)
+        ->with(['voucherLines', 'user', 'taxTotals', 'allowanceCharges'])
+        ->paginate(10);
 
     return view('dashboard.articulos', compact('vouchers'));
 }
 
 
+
 public function searchVoucherArticulos(Request $request)
 {
-    // Obtener los términos de búsqueda
-    $search = $request->input('search'); // Buscar por texto
-    $searchBy = $request->input('search_by'); // Obtener el campo por el cual se está buscando (si es por fecha, serie, etc.)
-    $startDate = $request->input('start_date'); // Fecha de inicio
-    $endDate = $request->input('end_date'); // Fecha de fin
 
-    // Realizamos la consulta
+    $search = $request->input('search');
+    $searchBy = $request->input('search_by');
+    $startDate = $request->input('start_date');
+    $endDate = $request->input('end_date');
+
+
     $vouchers = Voucher::query()
-        ->with(['voucherLines', 'user', 'taxTotals', 'allowanceCharges'])  // Relaciones necesarias
+        ->with(['voucherLines', 'user', 'taxTotals', 'allowanceCharges'])
         ->when($search, function ($query, $search) use ($searchBy) {
             return $query->where(function ($query) use ($search, $searchBy) {
-                // Si el campo seleccionado es "created_at", filtrar por la fecha de creación
+
                 if ($searchBy === 'created_at') {
-                    // Suponiendo que el formato de búsqueda sea 'Y-m-d' (ejemplo: '2023-01-15')
+
                     $query->whereDate('created_at', '=', $search);
                 } else {
-                    // Aquí van los filtros existentes para otros campos
+
                     $query->where('invoice_id', 'like', "%$search%")
                         ->orWhere('currency', 'like', "%$search%")
                         ->orWhere('issuer_name', 'like', "%$search%")
                         ->orWhere('receiver_name', 'like', "%$search%")
                         ->orWhereHas('user', function ($userQuery) use ($search) {
-                            $userQuery->where('name', 'like', "%$search%");  // Buscar en el nombre del usuario
+                            $userQuery->where('name', 'like', "%$search%");
                         })
                         ->orWhereHas('voucherLines', function ($lineQuery) use ($search) {
-                            $lineQuery->where('description', 'like', "%$search%")  // Buscar en la descripción de los artículos
-                                      ->orWhere('item_id', 'like', "%$search%")  // Buscar en el ID del artículo
-                                      ->orWhere('unit_price', 'like', "%$search%");  // Buscar en el precio unitario
+                            $lineQuery->where('description', 'like', "%$search%")
+                                      ->orWhere('item_id', 'like', "%$search%")
+                                      ->orWhere('unit_price', 'like', "%$search%");
                         })
                         ->orWhereHas('taxTotals', function ($taxQuery) use ($search) {
-                            $taxQuery->where('tax_name', 'like', "%$search%")  // Buscar en el nombre del impuesto
-                                     ->orWhere('tax_code', 'like', "%$search%");  // Buscar en el código del impuesto
+                            $taxQuery->where('tax_name', 'like', "%$search%")
+                                     ->orWhere('tax_code', 'like', "%$search%");
                         })
                         ->orWhereHas('allowanceCharges', function ($chargeQuery) use ($search) {
-                            $chargeQuery->where('reason_code', 'like', "%$search%");  // Buscar en el código del motivo de cargo/descuento
+                            $chargeQuery->where('reason_code', 'like', "%$search%");
                         });
                 }
             });
         })
         ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-            // Filtrar por el rango de fechas
+
             return $query->whereBetween('created_at', [$startDate, $endDate]);
         })
         ->when($startDate && !$endDate, function ($query) use ($startDate) {
-            // Filtrar por fecha de inicio sin fecha final
+
             return $query->where('created_at', '>=', $startDate);
         })
         ->when(!$startDate && $endDate, function ($query) use ($endDate) {
-            // Filtrar por fecha final sin fecha de inicio
+
             return $query->where('created_at', '<=', $endDate);
         })
-        ->paginate(10);  // Paginar los resultados
+        ->paginate(10);
 
     return view('dashboard.articulos', compact('vouchers'));
 }

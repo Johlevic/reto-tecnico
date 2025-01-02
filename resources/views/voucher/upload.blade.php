@@ -19,13 +19,13 @@
                         <!-- Ícono de archivo como fondo -->
                         <i class="fas fa-file-upload fa-5x text-muted" style="opacity: 0.3; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
 
-                        <!-- Input real oculto -->
+
                         <input type="file" class="custom-file-input d-none" id="file" name="files[]" accept=".xml" required multiple>
 
-                        <!-- Zona de texto interactiva para el input -->
-                        <label class="file-label btn btn-outline-primary position-relative" for="file" style="z-index: 1;">
+
+                        <label class="file-label btn  position-relative" for="file" style="z-index: 1;">
                             <i class="fas fa-cloud-upload-alt fa-2x mr-2"></i>
-                            <span class="text">Haz clic para subir archivos</span>
+                            <span class="text text-gray font-extralight">Haz clic para subir archivos</span>
                         </label>
 
                         <!-- Contenedor para mostrar los íconos y nombres de los archivos seleccionados -->
@@ -99,15 +99,15 @@
     <!-- Card -->
     <div class="card">
         <!-- Card Header -->
-        <div class="card-header bg-primary text-white">
-            <h4 class="text-center mb-0 ">Comprobantes Registrados</h4>
+        <div class="card-header bg-success  text-white">
+            <h6 class="text-center mb-0 ">Comprobantes Registrados</h6>
         </div>
 
         <!-- Card Body -->
         <div class="card-body">
             <!-- Tabla de Vouchers -->
             <table id="vouchersTable" class="table table-bordered table-striped text-sm table-responsive">
-                <thead>
+                <thead class="bg-primary justify-center flex">
                     <tr>
                         <th>Invoice ID</th>
                         <th>Emisor</th>
