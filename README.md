@@ -23,7 +23,7 @@ Antes de comenzar, asegúrate de tener instalados los siguientes componentes en 
 1. **Clonar el repositorio**
    ```bash
    git clone https://github.com/Johlevic/reto-tecnico.git
-   cd TU_REPOSITORIO
+   cd reto-tecnico
    ```
 
 2. **Instalar las dependencias de PHP**
