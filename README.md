@@ -22,7 +22,7 @@ Antes de comenzar, asegúrate de tener instalados los siguientes componentes en 
 
 1. **Clonar el repositorio**
    ```bash
-   git clone https://github.com/TU_USUARIO/TU_REPOSITORIO.git
+   git clone https://github.com/Johlevic/reto-tecnico.git
    cd TU_REPOSITORIO
    ```
 
