@@ -34,12 +34,12 @@ class DashboardController extends Controller
         $totalValorProductos = VoucherLine::sum('line_extension_amount');
 
 
-        // Si solo necesitas el primer resultado
+        
         $diaMasRegistros = Voucher::selectRaw('DATE(created_at) as day, COUNT(*) as count')
         ->groupBy('day')
         ->orderByDesc('count')
-        ->limit(1)  // Solo obtiene el día con más registros
-        ->first();  // Obtener el primer resultado como un solo objeto
+        ->limit(1)
+        ->first();
 
 
 

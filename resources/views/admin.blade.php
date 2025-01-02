@@ -8,7 +8,7 @@
 
 @section('content')
 <div class="row">
-    <!-- Total de Vouchers -->
+
     <div class="col-lg-3 col-md-6">
         <div class="card bg-primary text-white">
             <div class="card-header">
@@ -20,7 +20,7 @@
         </div>
     </div>
 
-    <!-- Ganancias Totales -->
+
     <div class="col-lg-3 col-md-6">
         <div class="card bg-success text-white">
             <div class="card-header">
@@ -32,7 +32,6 @@
         </div>
     </div>
 
-    <!-- Total de Impuestos -->
     <div class="col-lg-3 col-md-6">
         <div class="card bg-warning text-white">
             <div class="card-header">
@@ -44,7 +43,7 @@
         </div>
     </div>
 
-    <!-- Total de Usuarios -->
+
     <div class="col-lg-3 col-md-6">
         <div class="card bg-info text-white">
             <div class="card-header">
@@ -58,7 +57,7 @@
 </div>
 
 <div class="row mt-4">
-    <!-- Total de Productos Registrados -->
+
     <div class="col-lg-3 col-md-6">
         <div class="card bg-secondary text-white">
             <div class="card-header">
@@ -70,7 +69,7 @@
         </div>
     </div>
 
-    <!-- Total de Valor de Productos -->
+
     <div class="col-lg-3 col-md-6">
         <div class="card bg-danger text-white">
             <div class="card-header">
@@ -115,7 +114,7 @@
 
 
 <div class="row mt-4">
-    <!-- Gráfico de Día con Más Registros -->
+
     <div class="col-lg-6 col-md-6">
         <div class="card">
             <div class="card-header bg-warning">Día con Más Registros <i class="fas fa-calendar-day"></i></div>
@@ -125,7 +124,7 @@
         </div>
     </div>
 
-    <!-- Usuarios con Más Ganancias -->
+
     <div class="col-lg-6 col-md-6">
         <div class="card">
             <div class="card-header bg-primary">Usuarios con Más Ganancias <i class="fas fa-users"></i></div>
@@ -177,7 +176,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    // Gráfico de barras para Ganancias por Día
+
     var ctxBar = document.getElementById('barChart').getContext('2d');
     var barChart = new Chart(ctxBar, {
         type: 'bar',
@@ -210,7 +209,7 @@
     });
 
     $(document).ready(function() {
-    // Inicializar las tablas de forma más compacta
+    
     ['#tableArticulos'].forEach(function(table) {
         $(table).DataTable({
             dom: 'Bfrtip',

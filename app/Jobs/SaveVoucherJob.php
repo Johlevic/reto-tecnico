@@ -36,26 +36,26 @@ class SaveVoucherJob implements ShouldQueue
     {
         $userId = $this->userId;
 
-        // Comprobar si el user_id no es nulo, vacío o 0
+
         if (empty($userId) || $userId == '0') {
             throw new Exception("El user_id proporcionado no es válido.");
         }
 
-        // Verificar si el user_id existe en la base de datos
-        $userExists = \App\Models\User::where('id', $userId)->exists(); // Comprobar si el usuario existe
+
+        $userExists = \App\Models\User::where('id', $userId)->exists();
 
         if (!$userExists) {
             throw new Exception("El user_id proporcionado no existe en la base de datos.");
         }
 
-        // Verificar si ya existe el comprobante con el mismo invoice_id
+
         if (Voucher::where('invoice_id', $this->data['voucher']['invoice_id'])->exists()) {
-            return; // Si ya existe, terminamos el job (no insertamos duplicados)
+            return;
         }
 
         $voucher = Voucher::create([
 
-            'user_id' => $this->userId, // Asegúrate de pasar el user_id
+            'user_id' => $this->userId,
             'invoice_id' => $this->data['voucher']['invoice_id'],
             'issue_date' => $this->data['voucher']['issue_date'],
             'issue_time' => $this->data['voucher']['issue_time'],
@@ -68,10 +68,10 @@ class SaveVoucherJob implements ShouldQueue
             'total_amount' => $this->data['voucher']['total_amount'] ?? null,
             'payable_amount' => $this->data['voucher']['payable_amount'],
 
-            'xml_content' => $this->xmlContent, // Almacenamos el XML para futura regularización
+            'xml_content' => $this->xmlContent,
         ]);
 
-        // Guardar los cargos y descuentos
+
         if (!empty($this->data['allowance_charges'])) {
             foreach ($this->data['allowance_charges'] as $charge) {
                 $voucher->allowanceCharges()->create([
@@ -83,7 +83,7 @@ class SaveVoucherJob implements ShouldQueue
             }
         }
 
-        // Guardar los totales de impuestos
+
         if (!empty($this->data['tax_totals'])) {
             foreach ($this->data['tax_totals'] as $tax) {
                 $voucher->taxTotals()->create([
@@ -95,12 +95,11 @@ class SaveVoucherJob implements ShouldQueue
             }
         }
 
-        // Guardar las líneas del comprobante
         foreach ($this->data['lines'] as $line) {
-            // Crear cada línea del comprobante
+
             VoucherLine::create([
 
-                'voucher_id' => $voucher->id, // Relacionar la línea con el comprobante
+                'voucher_id' => $voucher->id,
                 'line_id' => $line['line_id'],
                 'description' => $line['description'],
                 'quantity' => $line['quantity'],
