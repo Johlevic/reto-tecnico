@@ -1,66 +1,99 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Proyecto de Registro de Archivos XML
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Este proyecto ha sido desarrollado en **Laravel** y está diseñado para gestionar el registro y procesamiento de archivos XML de manera eficiente.
 
-## About Laravel
+## Características principales
+- **Procesamiento en segundo plano:** Utiliza servicios y colas de trabajo para manejar las operaciones de almacenamiento y extracción de datos desde los archivos XML.
+- **Extracción de datos:** Analiza los archivos XML para extraer información relevante y almacenarla en una base de datos MySQL local.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requisitos previos
+Antes de comenzar, asegúrate de tener instalados los siguientes componentes en tu entorno:
+- PHP 8.1 o superior
+- Composer
+- Node.js y npm
+- MySQL
+- Servidor web local (como XAMPP o Laravel Valet)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Pasos para levantar el proyecto
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. **Clonar el repositorio**
+   ```bash
+   git clone https://github.com/TU_USUARIO/TU_REPOSITORIO.git
+   cd TU_REPOSITORIO
+   ```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+2. **Instalar las dependencias de PHP**
+   ```bash
+   composer install
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3. **Configurar el archivo `.env`**
+   - Copia el archivo `.env.example` a `.env`:
+     ```bash
+     cp .env.example .env
+     ```
+   - Configura las credenciales de tu base de datos MySQL local.
 
-## Laravel Sponsors
+4. **Migrar la base de datos y cargar los seeders**
+   ```bash
+   php artisan migrate --seed
+   ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+5. **Compilar los assets del frontend**
+   ```bash
+   npm install
+   npm run dev
+   ```
 
-### Premium Partners
+6. **Iniciar el procesamiento en segundo plano**
+   Ejecuta el siguiente comando para manejar las colas de trabajo:
+   ```bash
+   php artisan queue:work
+   ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+7. **Iniciar el servidor local**
+   ```bash
+   php artisan serve
+   ```
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Credenciales de acceso
 
-## Code of Conduct
+Para iniciar sesión en la aplicación, utiliza las siguientes credenciales predefinidas:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- **Usuario 1:**
+  - Correo: `usuario1@example.com`
+  - Contraseña: `password1234`
 
-## Security Vulnerabilities
+- **Usuario 2:**
+  - Correo: `usuario2@example.com`
+  - Contraseña: `password12345`
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+> **Nota:** Estas cuentas se crean automáticamente al ejecutar los seeders.
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Acceso a la aplicación
+
+1. Abre tu navegador y ve a la siguiente ruta:
+   ```
+   http://localhost:8000/
+   ```
+
+2. Inicia sesión con las credenciales proporcionadas.
+
+¡El proyecto estará listo para usar!
+
+---
+
+## Notas adicionales
+- Si tienes problemas con las colas de trabajo, verifica que tu configuración de `queue` en `.env` sea correcta.
+- Recuerda que los archivos XML se procesan automáticamente al subirlos.
+
+Si necesitas más ayuda, consulta la documentación oficial de Laravel o contacta al desarrollador del proyecto.
+
